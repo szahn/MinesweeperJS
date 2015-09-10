@@ -1,0 +1,169 @@
+*, body, html{
+	font-family: 'Rubik', sans-serif;
+}
+
+.game{
+	text-align: center;
+	margin: 0 auto;
+}
+
+.lower-controls{
+	float: left;
+	width: 100%;
+}
+
+select{
+	font-size: 1em;
+	width: 100%;
+	display: inline-block;
+}
+
+.upper-controls{
+	text-transform: uppercase;
+	vertical-align: middle;
+	display: inline-block;
+	width:100%;
+}
+
+.upper-controls .status{
+	float:left;
+	vertical-align: middle;
+	display: inline-block;
+	padding: 8px;
+    font-size: 1.2em;
+}
+
+.upper-controls .msg{
+	vertical-align: middle;
+	display: inline-block;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 12px;
+}
+
+.upper-controls .reset-game{
+	display: inline-block;
+	vertical-align: middle;
+	text-transform: uppercase;
+	padding: 8px;
+	float:right;
+	font-size: 1.2em;
+    margin-bottom: 6px;
+    cursor:pointer;
+}
+
+.unselectable{
+	-moz-user-select: none; 
+	-khtml-user-select: none; 
+	-webkit-user-select: none; 
+	-o-user-select: none; 
+}
+
+.board{
+	cursor: pointer;
+	background: #FFF;
+	overflow: hidden;
+	margin-bottom: 20px;
+}
+
+.row{
+	display:inline-block;
+	width: 100%;
+	margin: 0px 0px;
+	padding: 0px 0px;
+}
+
+.cell{
+	margin: 0px 0px;
+	padding: 0px 0px;
+	background: #DDD;
+	border-radius: 4px;
+	font-size: 1.2em !important;;
+	vertical-align: middle !important;;
+	line-height: 32px !important;;
+	-webkit-transition: all 0.12s ease-out;
+	-moz-transition: all 0.12s ease-out;
+	-o-transition: all 0.12s ease-out;
+	transition: all 0.12s ease-out;
+	-ms-transition: all 0.12s ease-out;
+	width: 32px;
+	height: 32px;
+	display: inline-block;	
+	float:left;
+	text-align: center;
+	vertical-align: middle;
+	border-left: 1px solid #DDD;
+	border-top: 1px solid #DDD;
+	border-right: 1px solid #333;
+	border-bottom: 1px solid #333;
+}
+
+.cell.pressed{
+	border-right: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
+	border-left: 1px solid #333;
+	border-top: 1px solid #333;
+}
+
+.cell span{
+	line-height: 32px;
+}
+
+.empty{
+	cursor:default;
+	background: #fff;
+	border:1px solid #ddd;
+}
+
+.empty.pressed{
+	border: 1px solid #888;
+}
+
+.mine{
+	background: red;
+	color: black;
+}
+
+.flag{
+	background: yellow;
+	color: black;
+}
+
+.empty[count='1']{
+	color: black;
+}
+
+.empty[count='1']{
+	color: blue;
+}
+
+.empty[count='2']{
+	color: green;
+}
+
+.empty[count='3']{
+	color: red;
+}
+
+.empty[count='4']{
+	color: darkblue;
+}
+
+.empty[count='5']{
+	color: darkred;
+}
+
+.empty[count='6']{
+	color: teal;
+}
+
+.empty[count='7']{
+	color: purple;
+}
+
+.empty[count='8']{
+	color: black;
+}
+
+.red{color: red;}
+.green{color: green;}

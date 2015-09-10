@@ -1,0 +1,7 @@
+{
+  "name": "MinesweeperJS",
+  "version": "1.0.0",
+  "devDependencies": {
+    "gulp-babel": "^5.2.1"
+  }
+}
