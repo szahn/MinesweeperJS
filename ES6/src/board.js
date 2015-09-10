@@ -8,9 +8,27 @@ class Board{
 	constructor(width, height, mineCount){
 		this.width = width;
 		this.height = height;
+		this.rows = this.numToArray(this.height);
+		this.columns = this.numToArray(this.width);
 		this.numberOfMines = mineCount;
 		this.map = [];
 		this.mines = []
+	}
+
+	forEachCell(callback){
+		for (let x of this.columns){
+			for (let y of this.rows){
+				callback(x, y);
+			}
+		}
+	}
+
+	numToArray(number){
+		let numbers = [];
+		for(let n = 0; n < number; n++){
+			numbers.push(n);
+		}
+		return numbers;
 	}
 
 	getCell(x, y){
@@ -27,17 +45,13 @@ class Board{
 
 	clear(){
 		this.mines = []
-		var map = this.map;
-		for (let x = 0;x < this.width;x ++){
-			for (let y = 0;y <  this.height;y ++){
-				this.setCell(x, y, CELL_EMPTY);				
-			}
-		}
+		this.forEachCell((x, y) => {
+			this.setCell(x, y, CELL_EMPTY);				
+		});
 	}
 
 	haveAllMinesBeenFlagged(){
-		for (let i = 0; i < this.mines.lengnth; i++){
-			let mine = this.mines[i];
+		for (let mine of this.mines){
 			if ((this.getCell(mine[0], mine[1]) & CELL_FLAG) != CELL_FLAG){
 				return false;
 			}
@@ -47,13 +61,11 @@ class Board{
 	}
 
 	revealMines(){
-		for (let x = 0;x < this.width;x ++){
-			for (let y = 0;y <  this.height;y ++){
-				let flags = this.getCell(x,y);
-				if ((flags & CELL_MINE) == CELL_MINE)
-					this.setCell(x, y, flags | CELL_VISIBLE);				
-			}
-		}
+		this.forEachCell((x, y) => {
+			let flags = this.getCell(x,y);
+			if ((flags & CELL_MINE) == CELL_MINE)
+				this.setCell(x, y, flags | CELL_VISIBLE);				
+		});
 	}
 
 	floodFill(x, y, checked){
@@ -99,14 +111,12 @@ class Board{
 
 	getUnflaggedMineCount(){
 		let count = 0;
-		for (let x = 0;x < this.width;x ++){
-			for (let y = 0;y <  this.height;y ++){
-				let flags = this.getCell(x, y);
-				if ((flags & CELL_MINE) == CELL_MINE && !((flags & CELL_FLAG) == CELL_FLAG)){
-					count +=1;
-				}				
-			}
-		}
+		this.forEachCell((x, y) => {
+			let flags = this.getCell(x, y);
+			if ((flags & CELL_MINE) == CELL_MINE && !((flags & CELL_FLAG) == CELL_FLAG)){
+				count +=1;
+			}				
+		});
 
 		return count;
 	}
@@ -127,59 +137,7 @@ class Board{
 		}
 	}
 
-	draw(containerEl){
-		for (let y = 0;y < this.height;y ++){
-			let rowId = `row${y}`;
-			let existingRowEl = $(`#${rowId}`);
-			let existingRow = existingRowEl.length == 1 ? existingRowEl : null;
-			let row = existingRow || $(`<div id=\"${rowId}\" class=\"row\">`);
-			for (let x = 0;x <  this.width;x ++){
-				let cellFlags = this.getCell(x, y);
-				let cellId = `cell${x}x${y}`;
-				let existingCellEl = $(`#${cellId}`);
-				let existingCell = existingCellEl.length == 1 ? existingCellEl : null;
-				let cell = existingCell || $(`<div id=\"${cellId}\" class=\"cell\">`).attr({x: x, y: y});				
-				let isVisible = (cellFlags & CELL_VISIBLE) == CELL_VISIBLE; 
-				let isFlagged = (cellFlags & CELL_FLAG) == CELL_FLAG; 
-				if (isVisible && !isFlagged){
-					if ((cellFlags & CELL_MINE) == CELL_MINE)
-					{
-						cell.removeClass("flag empty fa fa-flag").addClass("mine fa fa-bomb");
-					}				
-					if ((cellFlags & CELL_EMPTY) == CELL_EMPTY)
-					{
-						cell.removeClass("mine flag fa-bomb fa-flag fa").addClass("empty");
-						
-						let neighbors = 0;
-						for (let x1 = Math.max(0, x - 1); x1 <= Math.min(x + 1, this.width - 1); x1++){
-							for (let y1 = Math.max(0, y - 1); y1 <= Math.min(y + 1, this.height - 1); y1++){
-								if ((this.getCell(x1, y1) & CELL_MINE) == CELL_MINE) neighbors += 1;
-							}
-						}
 
-						cell.attr("count", neighbors);
-						if (neighbors > 0){
-							cell.html(neighbors)
-						}
-						else{
-							cell.empty();	
-						}
-					}
-				}
-				else if (!isVisible && !isFlagged){
-					cell.removeClass("flag fa fa-flag empty mine fa-bomb");
-				}
-
-				if (isFlagged){
-					cell.removeClass("empty mine fa-bomb").addClass("flag fa fa-flag");
-				}
-
-				if (!existingCell) row.append(cell);
-			}
-
-			if (!existingRow) $(containerEl).append(row);
-		}
-	}
 
 	build(){
 		this.buildCluster(0, 6, 3);

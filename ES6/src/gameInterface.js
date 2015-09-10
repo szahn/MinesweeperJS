@@ -9,7 +9,7 @@ class GameInterface {
 	}
 
 	disableRightClick(el) {
-		el.oncontextmenu = function(ev){
+		el.oncontextmenu = (ev) => {
 			 if (ev.stopPropagation)
 	            ev.stopPropagation();
 

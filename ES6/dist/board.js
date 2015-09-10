@@ -15,12 +15,73 @@ var Board = (function () {
 
 		this.width = width;
 		this.height = height;
+		this.rows = this.numToArray(this.height);
+		this.columns = this.numToArray(this.width);
 		this.numberOfMines = mineCount;
 		this.map = [];
 		this.mines = [];
 	}
 
 	_createClass(Board, [{
+		key: "forEachCell",
+		value: function forEachCell(callback) {
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+				for (var _iterator = this.columns[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					var x = _step.value;
+					var _iteratorNormalCompletion2 = true;
+					var _didIteratorError2 = false;
+					var _iteratorError2 = undefined;
+
+					try {
+						for (var _iterator2 = this.rows[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+							var y = _step2.value;
+
+							callback(x, y);
+						}
+					} catch (err) {
+						_didIteratorError2 = true;
+						_iteratorError2 = err;
+					} finally {
+						try {
+							if (!_iteratorNormalCompletion2 && _iterator2["return"]) {
+								_iterator2["return"]();
+							}
+						} finally {
+							if (_didIteratorError2) {
+								throw _iteratorError2;
+							}
+						}
+					}
+				}
+			} catch (err) {
+				_didIteratorError = true;
+				_iteratorError = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion && _iterator["return"]) {
+						_iterator["return"]();
+					}
+				} finally {
+					if (_didIteratorError) {
+						throw _iteratorError;
+					}
+				}
+			}
+		}
+	}, {
+		key: "numToArray",
+		value: function numToArray(number) {
+			var numbers = [];
+			for (var n = 0; n < number; n++) {
+				numbers.push(n);
+			}
+			return numbers;
+		}
+	}, {
 		key: "getCell",
 		value: function getCell(x, y) {
 			return this.map[this.coordToCellIndex(x, y)];
@@ -38,21 +99,40 @@ var Board = (function () {
 	}, {
 		key: "clear",
 		value: function clear() {
+			var _this = this;
+
 			this.mines = [];
-			var map = this.map;
-			for (var x = 0; x < this.width; x++) {
-				for (var y = 0; y < this.height; y++) {
-					this.setCell(x, y, CELL_EMPTY);
-				}
-			}
+			this.forEachCell(function (x, y) {
+				_this.setCell(x, y, CELL_EMPTY);
+			});
 		}
 	}, {
 		key: "haveAllMinesBeenFlagged",
 		value: function haveAllMinesBeenFlagged() {
-			for (var i = 0; i < this.mines.lengnth; i++) {
-				var mine = this.mines[i];
-				if ((this.getCell(mine[0], mine[1]) & CELL_FLAG) != CELL_FLAG) {
-					return false;
+			var _iteratorNormalCompletion3 = true;
+			var _didIteratorError3 = false;
+			var _iteratorError3 = undefined;
+
+			try {
+				for (var _iterator3 = this.mines[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+					var mine = _step3.value;
+
+					if ((this.getCell(mine[0], mine[1]) & CELL_FLAG) != CELL_FLAG) {
+						return false;
+					}
+				}
+			} catch (err) {
+				_didIteratorError3 = true;
+				_iteratorError3 = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion3 && _iterator3["return"]) {
+						_iterator3["return"]();
+					}
+				} finally {
+					if (_didIteratorError3) {
+						throw _iteratorError3;
+					}
 				}
 			}
 
@@ -61,12 +141,12 @@ var Board = (function () {
 	}, {
 		key: "revealMines",
 		value: function revealMines() {
-			for (var x = 0; x < this.width; x++) {
-				for (var y = 0; y < this.height; y++) {
-					var flags = this.getCell(x, y);
-					if ((flags & CELL_MINE) == CELL_MINE) this.setCell(x, y, flags | CELL_VISIBLE);
-				}
-			}
+			var _this2 = this;
+
+			this.forEachCell(function (x, y) {
+				var flags = _this2.getCell(x, y);
+				if ((flags & CELL_MINE) == CELL_MINE) _this2.setCell(x, y, flags | CELL_VISIBLE);
+			});
 		}
 	}, {
 		key: "floodFill",
@@ -114,15 +194,15 @@ var Board = (function () {
 	}, {
 		key: "getUnflaggedMineCount",
 		value: function getUnflaggedMineCount() {
+			var _this3 = this;
+
 			var count = 0;
-			for (var x = 0; x < this.width; x++) {
-				for (var y = 0; y < this.height; y++) {
-					var flags = this.getCell(x, y);
-					if ((flags & CELL_MINE) == CELL_MINE && !((flags & CELL_FLAG) == CELL_FLAG)) {
-						count += 1;
-					}
+			this.forEachCell(function (x, y) {
+				var flags = _this3.getCell(x, y);
+				if ((flags & CELL_MINE) == CELL_MINE && !((flags & CELL_FLAG) == CELL_FLAG)) {
+					count += 1;
 				}
-			}
+			});
 
 			return count;
 		}
@@ -139,57 +219,6 @@ var Board = (function () {
 			} else {
 				this.setCell(x, y, flags | CELL_FLAG);
 				return -1;
-			}
-		}
-	}, {
-		key: "draw",
-		value: function draw(containerEl) {
-			for (var y = 0; y < this.height; y++) {
-				var rowId = "row" + y;
-				var existingRowEl = $("#" + rowId);
-				var existingRow = existingRowEl.length == 1 ? existingRowEl : null;
-				var row = existingRow || $("<div id=\"" + rowId + "\" class=\"row\">");
-				for (var x = 0; x < this.width; x++) {
-					var cellFlags = this.getCell(x, y);
-					var cellId = "cell" + x + "x" + y;
-					var existingCellEl = $("#" + cellId);
-					var existingCell = existingCellEl.length == 1 ? existingCellEl : null;
-					var cell = existingCell || $("<div id=\"" + cellId + "\" class=\"cell\">").attr({ x: x, y: y });
-					var isVisible = (cellFlags & CELL_VISIBLE) == CELL_VISIBLE;
-					var isFlagged = (cellFlags & CELL_FLAG) == CELL_FLAG;
-					if (isVisible && !isFlagged) {
-						if ((cellFlags & CELL_MINE) == CELL_MINE) {
-							cell.removeClass("flag empty fa fa-flag").addClass("mine fa fa-bomb");
-						}
-						if ((cellFlags & CELL_EMPTY) == CELL_EMPTY) {
-							cell.removeClass("mine flag fa-bomb fa-flag fa").addClass("empty");
-
-							var neighbors = 0;
-							for (var x1 = Math.max(0, x - 1); x1 <= Math.min(x + 1, this.width - 1); x1++) {
-								for (var y1 = Math.max(0, y - 1); y1 <= Math.min(y + 1, this.height - 1); y1++) {
-									if ((this.getCell(x1, y1) & CELL_MINE) == CELL_MINE) neighbors += 1;
-								}
-							}
-
-							cell.attr("count", neighbors);
-							if (neighbors > 0) {
-								cell.html(neighbors);
-							} else {
-								cell.empty();
-							}
-						}
-					} else if (!isVisible && !isFlagged) {
-						cell.removeClass("flag fa fa-flag empty mine fa-bomb");
-					}
-
-					if (isFlagged) {
-						cell.removeClass("empty mine fa-bomb").addClass("flag fa fa-flag");
-					}
-
-					if (!existingCell) row.append(cell);
-				}
-
-				if (!existingRow) $(containerEl).append(row);
 			}
 		}
 	}, {

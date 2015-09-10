@@ -9,6 +9,7 @@ var Game = (function () {
 		_classCallCheck(this, Game);
 
 		this.gameState = new GameState();
+		this.boardRenderer = new BoardRenderer(opts.boardEl);
 		this.boardConfig = new BoardConfig().beginner();
 		this.mineCount = this.boardConfig.mines;
 		this.gameInterface = new GameInterface(opts);
@@ -30,7 +31,7 @@ var Game = (function () {
 		value: function resetGame() {
 			this.gameInterface.resizeBoard(this.boardConfig.width * 34, this.boardConfig.height * 34);
 			this.newGame();
-			this.board.draw(this.boardEl);
+			this.boardRenderer.draw(this.board);
 			this.mineCount = this.boardConfig.mines;
 			this.gameInterface.updateMineCount(this.mineCount);
 			this.gameInterface.reset();
@@ -38,7 +39,8 @@ var Game = (function () {
 	}, {
 		key: "setupUI",
 		value: function setupUI() {
-			var that = this;
+			var _this = this;
+
 			this.gameInterface.disableRightClick(this.boardEl[0]);
 			this.gameInterface.updateMineCount(this.mineCount);
 			this.gameInterface.reset();
@@ -49,45 +51,45 @@ var Game = (function () {
 			}
 
 			this.configSelect.on("change", function () {
-				var boardType = that.configSelect.val();
-				that.boardConfig = new BoardConfig()[boardType]();
-				that.resetGame();
+				var boardType = _this.configSelect.val();
+				_this.boardConfig = new BoardConfig()[boardType]();
+				_this.resetGame();
 			});
 
 			this.resetBtn.click(function () {
-				that.resetGame();
+				_this.resetGame();
 			});
 
 			this.gameState.onWon(function () {
-				that.gameInterface.onWon();
+				_this.gameInterface.onWon();
 			});
 
 			this.gameState.onLost(function () {
-				that.gameInterface.onLost();
+				_this.gameInterface.onLost();
 			});
 
 			this.boardEl.on("mousedown", ".cell", function (ev) {
-				if (that.gameState.isGameOver()) return;
+				if (_this.gameState.isGameOver()) return;
 				var cell = $(ev.target);
 				cell.addClass("pressed");
 			}).on("mouseup", ".cell", function (ev) {
-				if (that.gameState.isGameOver()) return;
+				if (_this.gameState.isGameOver()) return;
 				var cell = $(ev.target);
 				cell.removeClass("pressed");
 				var x = parseInt(cell.attr("x"), 10);
 				var y = parseInt(cell.attr("y"), 10);
 				if (ev.button === 0) {
-					if (that.board.hitCell(x, y)) {
-						that.gameState.gameOver(false);
+					if (_this.board.hitCell(x, y)) {
+						_this.gameState.gameOver(false);
 					}
 				} else {
-					that.mineCount += that.board.flagCell(x, y);
+					_this.mineCount += _this.board.flagCell(x, y);
 				}
 
-				that.board.draw(that.boardEl);
-				that.gameInterface.updateMineCount(that.mineCount);
-				if (that.board.getUnflaggedMineCount() === 0) {
-					that.gameState.gameOver(true);
+				_this.boardRenderer.draw(_this.board);
+				_this.gameInterface.updateMineCount(_this.mineCount);
+				if (_this.board.getUnflaggedMineCount() === 0) {
+					_this.gameState.gameOver(true);
 				}
 			});
 		}
