@@ -25,13 +25,14 @@ var Game = (function () {
 			this.board = new Board(this.boardConfig.width, this.boardConfig.height, this.boardConfig.mines);
 			this.board.clear();
 			this.board.build();
+			this.boardRenderer.build(this.board);
 		}
 	}, {
 		key: "resetGame",
 		value: function resetGame() {
 			this.gameInterface.resizeBoard(this.boardConfig.width * 34, this.boardConfig.height * 34);
 			this.newGame();
-			this.boardRenderer.draw(this.board);
+			this.boardRenderer.update(this.board);
 			this.mineCount = this.boardConfig.mines;
 			this.gameInterface.updateMineCount(this.mineCount);
 			this.gameInterface.reset();
@@ -70,11 +71,11 @@ var Game = (function () {
 
 			this.boardEl.on("mousedown", ".cell", function (ev) {
 				if (_this.gameState.isGameOver()) return;
-				var cell = $(ev.target);
+				var cell = $(ev.target).parent().parent();
 				cell.addClass("pressed");
 			}).on("mouseup", ".cell", function (ev) {
 				if (_this.gameState.isGameOver()) return;
-				var cell = $(ev.target);
+				var cell = $(ev.target).parent().parent();
 				cell.removeClass("pressed");
 				var x = parseInt(cell.attr("x"), 10);
 				var y = parseInt(cell.attr("y"), 10);
@@ -86,7 +87,7 @@ var Game = (function () {
 					_this.mineCount += _this.board.flagCell(x, y);
 				}
 
-				_this.boardRenderer.draw(_this.board);
+				_this.boardRenderer.update(_this.board);
 				_this.gameInterface.updateMineCount(_this.mineCount);
 				if (_this.board.getUnflaggedMineCount() === 0) {
 					_this.gameState.gameOver(true);

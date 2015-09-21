@@ -16,12 +16,13 @@ class Game{
 		this.board = new Board(this.boardConfig.width, this.boardConfig.height, this.boardConfig.mines);
 		this.board.clear();
 		this.board.build();
+		this.boardRenderer.build(this.board);
 	}
 
 	resetGame(){
 		this.gameInterface.resizeBoard(this.boardConfig.width * 34, this.boardConfig.height * 34);
 		this.newGame();
-		this.boardRenderer.draw(this.board);
+		this.boardRenderer.update(this.board);
 		this.mineCount = this.boardConfig.mines; 
 		this.gameInterface.updateMineCount(this.mineCount);
 		this.gameInterface.reset();
@@ -57,11 +58,11 @@ class Game{
 
 		this.boardEl.on("mousedown", ".cell", ev =>{
 			if (this.gameState.isGameOver()) return;
-			let cell = $(ev.target);
+			let cell = $(ev.target).parent().parent();
 			cell.addClass("pressed");
 		}).on("mouseup", ".cell", ev => {
 			if (this.gameState.isGameOver()) return;
-			let cell = $(ev.target);
+			let cell = $(ev.target).parent().parent();
 			cell.removeClass("pressed");
 			let x = parseInt(cell.attr("x"), 10);
 			let y = parseInt(cell.attr("y"), 10);
@@ -74,7 +75,7 @@ class Game{
 				this.mineCount += this.board.flagCell(x, y);
 			}
 			
-			this.boardRenderer.draw(this.board);
+			this.boardRenderer.update(this.board);
 			this.gameInterface.updateMineCount(this.mineCount);
 			if (this.board.getUnflaggedMineCount() === 0) {
 				this.gameState.gameOver(true);

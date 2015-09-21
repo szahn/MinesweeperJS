@@ -64,6 +64,7 @@ select{
 	background: #FFF;
 	overflow: hidden;
 	margin-bottom: 20px;
+	perspective: 800px;
 }
 
 .row{
@@ -74,18 +75,16 @@ select{
 }
 
 .cell{
+  	position: relative;
+  	perspective: 800px;
+	overflow: hidden;
 	margin: 0px 0px;
 	padding: 0px 0px;
 	background: #DDD;
 	border-radius: 4px;
 	font-size: 1.2em !important;;
-	vertical-align: middle !important;;
-	line-height: 32px !important;;
-	-webkit-transition: all 0.12s ease-out;
-	-moz-transition: all 0.12s ease-out;
-	-o-transition: all 0.12s ease-out;
-	transition: all 0.12s ease-out;
-	-ms-transition: all 0.12s ease-out;
+	vertical-align: middle !important;
+	line-height: 32px !important;
 	width: 32px;
 	height: 32px;
 	display: inline-block;	
@@ -98,11 +97,53 @@ select{
 	border-bottom: 1px solid #333;
 }
 
-.cell.pressed{
+.faces{
+	-webkit-transition: all .5s;
+	-moz-transition: all .5s;
+	-o-transition: all .5s;
+	transition: all .5s;
+	-ms-transition: all .5s;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	transform-style: preserve-3d;
+}
+
+.face{
+	-webkit-transition: all .25s;
+	-moz-transition: all .25s;
+	-o-transition: all .25s;
+	transition: all .25s;
+	-ms-transition: all .25s;
+	margin: 0;
+	display: block;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	backface-visibility: hidden;
+    line-height: 32px !important;
+    font-size: 1.2em !important;
+    left: 0px;
+    top: 0px;
+}
+
+.front{
+
+}
+
+.back{
+	transform: rotateY( 180deg );
+}
+
+.pressed{
 	border-right: 1px solid #DDD;
 	border-bottom: 1px solid #DDD;
 	border-left: 1px solid #333;
 	border-top: 1px solid #333;
+}
+
+.flipped{
+	transform: rotateY( 180deg );
 }
 
 .cell span{
